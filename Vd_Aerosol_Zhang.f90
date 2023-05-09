@@ -92,7 +92,7 @@ subroutine dryvd_pm(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhoprt)
 !   25          mixed wood forests
 !   26          transitional forest
 
-!Input argiments
+!Input arguments
 !    z2         meteorology reference height          (unit = m)
 !    zl         Z/L stability parameter               (unit = 1)
 !    z0_f       surface roughness                     (unit = m)
@@ -121,7 +121,7 @@ subroutine dryvd_pm(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhoprt)
     implicit none
 
     include 'camx.prm'        !I think we need to replace this with our ufs inputs
-    inclde  'deposit.inc'     !I think we need to replace this with our ufs inputs
+    include 'deposit.inc'     !I think we need to replace this with our ufs inputs
 
 !Step 0. Define input variables type & value constant
 !!Step 0-1. Define global variables
@@ -150,9 +150,9 @@ subroutine dryvd_pm(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhoprt)
     real    :: priiv
     real    :: vphil
     real    :: cfac
-    real    :: taurel
+    real    :: taurel                                     !Relaxation time
     real    :: amob
-    real    :: diff
+    real    :: diff                                       !Brownian diffusivity
     real    :: schm
     real    :: pdepv
     real    :: st
@@ -167,8 +167,8 @@ subroutine dryvd_pm(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhoprt)
     real,parameter    :: aa1    = 1.257
     real,parameter    :: aa2    = 0.4
     real,parameter    :: aa3    = 1.1
-    real,parameter    :: amfp   = 6.53e-8
-    real,parameter    :: roarow = 1.19
+    real,parameter    :: amfp   = 6.53e-8                  !Lambda, mean free path for air molecules
+    real,parameter    :: roarow = 1.19                     ! air density at 20C, (unit = kg/m^3)
     real,parameter    :: boltzk = 1.3806044503487214e-23
     real,parameter    :: dair = 0.369*29.+6.29
     real,parameter    :: dh2o = 0.369*18.+6.29
@@ -192,7 +192,7 @@ subroutine dryvd_pm(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhoprt)
               0.56,0.54,0.54,0.54,0.56,0.56/)
     
     !particle density          
-    RHOP  = rhoprt*1.0e-3           !Covert a unit from g/m^3 to kg/m^3
+    rhop  = rhoprt*1.0e-3           !Covert a unit from g/m^3 to kg/m^3
 
     vdp   = 0.0    
     i     = mlu     
@@ -202,7 +202,7 @@ subroutine dryvd_pm(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhoprt)
 !
 
 
-!Step 1. Calculate aerodynamic resistance 
+!Step 1. Calculate aerodynamic resistance, Ra 
     if (zl >= 0) then
         ra = (0.74*log(z2/z0_f) + 4.7 *zl)/(0.4*ustar)
     else
@@ -217,7 +217,8 @@ subroutine dryvd_pm(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhoprt)
         ra = amin1(ra,1000.)
     endif
 
-!Step 2. Loop for partical species ???
+!Step 2. Calculate settling velocity, Vg 
+!!Loop for partical species ???
     if (lai_ref(i,15) == lat_ref(i,14)) then    !lai_ref IS NOT DEFINED
         pllp = pllp2(i)
     else
@@ -235,46 +236,49 @@ subroutine dryvd_pm(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhoprt)
     !calculate air kinetic viscosity
     anu      = amu/roarow
   
-    !calculate cunningham slip correction factor & relaxation time 
+    !calculate cunningham slip correction factor (for samll particles) & relaxation time (=vg/gravity)
     
     prii     = 2.* 9.81 /(9. * amu)
-    priiv    = prii * (RHOP -roarow)
+    priiv    = prii * (rhop -roarow)
     vphil    = 0.
-    cfac     = 1. + amfp/binsize*(aa1+aa2*exp(-aa3*binsize/amfp))
-    taurel   = amax1(priiv*binsize**2*cfac/9.81,0)
+    cfac     = 1. + amfp/binsize*(aa1+aa2*exp(-aa3*binsize/amfp))            !Follow Zhang et al., (2001) eqn (3)
+    taurel   = amax1(priiv*binsize**2*cfac/9.81,0)                  
 
-    !calculate stokes friction and diffusion coefficients
+    !calculate stokes friction and diffusion coefficients                    !Same as Wesely method for aerosol
     amob     = 6. * 3.14 * amu *binsize /cfac
-    diff     = boltzk *tave /amob
-    schm     = anu/diff
+    diff     = boltzk *tave /amob                                  
+    schm     = anu/diff                                                      !Follow Zhang et al., (2001)
 
     !calculate gravitational settling velocity
-    pdepv    = taurel * 9.81
+    pdepv    = taurel * 9.81                                                 !Follow Zhang et al., (2001) eqn (2)
 
+
+!Step 3. Calculate surface resistance, Rs
     !calculate efficiency by diffusion, impaction, interception and particle rebound
+
     !!smooth surface
     if (pllp <= 0) then
-        st   = taurel*ustar*ustar/anu
+        st   = taurel*g*ustar*ustar/anu                                      !Follow Slinn(1982), listed in Zhang et al.,(2001).CAMx original code is wrong, show *g??
     !!vegetated surface
     else
-        st   = taurel*ustar/pllp*1000
+        st   = taurel*ustar/pllp*1000                                        !Follow Giorgi(1988),listed in Zhang et al.,(2001). where A = pllp/1000
     endif
 
-    eb       = schm **(-gama(i))
-    eim      = (st/(st+aest(i)))**2
+    eb       = schm **(-gama(i))                                             !Follow Zhang et al.,(2001) eqn (6)
+    eim      = (st/(st+aest(i)))**2                                          !Follow Zhang et al.,(2001) eqn (7c)
     ein      = 0.0
-    if (pllp >= 0.00) then
-        ein  = (1000.*2.*binsize/pllp)**2*0.5
+    if (pllp > 0.00) then
+        ein  = (1000.*2.*binsize/pllp)**2*0.5                                !Follow Zhang et al.,(2001) eqn (8)
     end if
 
-    r1       = exp(-st**0.5)
+    r1       = exp(-st**0.5)                                                 !Follow Zhang et al.,(2001) eqn (9)
     
-    if (r1 <= 0.5) then
+    if (r1 < 0.5) then
         r1   = 0.5
-    rs       = 1./(3.*ustar*r1*(eb + eim + ein))
+    rs       = 1./(3.*ustar*r1*(eb + eim + ein))                             !Follow Zhang et al.,(2001) eqn (5),where epsilon == 3
 
-!Step 3. Calculate deposition velocity
-    vdsize   = prepv + 1./(ra + rs)
+!Step 4. Calculate deposition velocity
+    vdsize   = pdepv + 1./(ra + rs)                                          !Follow Zhang et al.,(2001) eqn (1)
     vdp      = vdsize
 
     return
