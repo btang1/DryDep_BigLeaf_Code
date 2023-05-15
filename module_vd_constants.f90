@@ -11,8 +11,6 @@ module vd_constants
     real, parameter :: boltz = 1.38e-20  ! Add comments and units to these
     real, parameter :: pi = 3.1415927    ! Add comments and units to these
     real, parameter :: vair = 1.5e-5     ! kinetic viscosity of air
-    real, parameter :: d1 = 2.           ! Add comments and units to these
-    real, parameter :: d2 = 0.667        ! Add comments and units to these
     real, parameter :: diffh2o = 2.3e-5  ! Add comments and units to these
 
 end module vd_constants
