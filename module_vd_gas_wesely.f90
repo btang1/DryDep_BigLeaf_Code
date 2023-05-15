@@ -89,7 +89,7 @@ module vd_gas_wesely
 
         !Step 2. Calulate deposition layer resistance (due to molecular diffusion), Rd
         schmidt = vair * diffrat/diffh2o
-        rd = d1 * schmidt**d2/(vk * ustar)
+        rd = 2. * schmidt**0.667/(vk * ustar)
         rd = amax1(rd,rmin)
 
         !Step 3. Calculate surface layer resistance, Rs
