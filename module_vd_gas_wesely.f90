@@ -81,7 +81,7 @@ module vd_gas_wesely
         real, intent(in)    :: rlco
         real, intent(in)    :: rgss
         real, intent(in)    :: rgso
-        real, intent(in)    :: vd
+        real, intent(out)    :: vd
 
         !Step 1. Calculate atmospheric resistance (due to turbulence diffusion), Ra
         ra = (log(deltaz/z0)-psih)/(vk * ustar)
@@ -102,7 +102,11 @@ module vd_gas_wesely
                 rs = 1./ (3.9e-5*henry*ustar*(ts+273.14))                                         !Follow Kumar et al (1996) and Sehmel (1980)
                 rs = amax1(rs,rmin)
             endif
-            goto 100 ! need to remove goto blocks - they are not accepted by NCO
+            
+        !Step 3-1-1. Calculate output deposition velocity 
+        rs = rs * rscale
+        vd = 1./(ra + rd + rs)
+        
         endif 
 
         !!Step 3-2. normal case, surface layer over land 
@@ -134,11 +138,11 @@ module vd_gas_wesely
                 if (ilu == 1) then
                     rlus = 50.
                 endif
-    !            rluo = 1./(1./3000.+1./(3.*rlu))                                                   !Follow Wesely et al.,(1989) eqn (11)
-                rluo = 1000 + rlu
+                rluo = 1./(1./3000.+1./(3.*rlu))                                                   !Follow Wesely et al.,(1989) eqn (11)
+    !            rluo = 1000 + rlu
             else                                !rain surface
-    !            rlus = 1./(1./5000. + 1./(3.*rlu))                                                 !Follow Wesely et al.,(1989) eqn (12)
-                rlus = 2000.+rlu
+                rlus = 1./(1./5000. + 1./(3.*rlu))                                                 !Follow Wesely et al.,(1989) eqn (12)
+    !            rlus = 2000.+rlu
                 if (ilu == 1.) then
                     rlus = 50.
                 endif
@@ -163,7 +167,6 @@ module vd_gas_wesely
         rlc = amin1(rmax,rlc)
 
         !!!Step 3-2-4.ground surface resistance, Rgs
-        !!!Rac was read-in ???
         rgs = 1./(henry/(henso2*rgss) * f0/rgso)               !Follow Wesely et al., (1989) eqn (9)
         rgs = amin1(rmax,rgs)
 
@@ -171,11 +174,8 @@ module vd_gas_wesely
         rs = 1./ (rst + rm) + 1./ruc + 1./(rdc + rlc) + 1./(rac +rgs) 
         rs = amax1(rmin, 1./rs)
 
-
-100 continue ! need to remove continue blocks
+        !Step 5. Calculate output deposition velocity 
         rs = rs * rscale
-        
-        !Step 5. Calculate output deposition velocity
         vd = 1./(ra + rd + rs)
 
         return
