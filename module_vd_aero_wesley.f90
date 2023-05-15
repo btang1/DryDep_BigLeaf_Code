@@ -33,14 +33,14 @@ contains
       !    future routine
 
       !Step 0. Definal variables type & constant values
-      real :: z0       ! Add comments and units to these
-      real :: deltaz   ! Add comments and units to these
-      real :: psih     ! Add comments and units to these
-      real :: ustar    ! Add comments and units to these
-      real :: diam     ! Add comments and units to these
-      real :: rhop     ! Add comments and units to these
-      real :: ts       ! Add comments and units to these
-      real :: vd       ! Add comments and units to these
+      real, intent(in) :: z0       ! Add comments and units to these
+      real, intent(in) :: deltaz   ! Add comments and units to these
+      real, intent(in) :: psih     ! Add comments and units to these
+      real, intent(in) :: ustar    ! Add comments and units to these
+      real, intent(in) :: diam     ! Add comments and units to these
+      real, intent(in) :: rhop     ! Add comments and units to these
+      real, intent(in) :: ts       ! Add comments and units to these
+      real, intent(out) :: vd       ! Add comments and units to these
 
       !Step 1. Calculate speed correction factor and sedimendation velocity
       power = amin1(7.6,0.55*diam/xmfp)
