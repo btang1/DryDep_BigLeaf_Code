@@ -111,17 +111,16 @@ module vd_gas_wesely
         !!Step 3-1. special case surface layer over water
         if (ilu == 7) then
             if (io3 == 1 .and. icdocn == 1) then
-                rs = 1./(1.e-4 + 5.e-6 * henry *ustar * ts **3)                                   !Follow Helmig et al (2012)
+                rs = 1./(1.e-4 + 5.e-6 * henry *ustar * ts **3.)                                   !Follow Helmig et al (2012)
                 rs = amax1(rs,1500.)
             else
-                rs = 1./ (3.9e-5*henry*ustar*(ts+273.14))                                         !Follow Kumar et al (1996) and Sehmel (1980)
+                rs = 1./ (3.9e-5*henry*ustar*(ts+273.15))                                         !Follow Kumar et al (1996) and Sehmel (1980)
                 rs = amax1(rs,rmin)
             endif
             
         !Step 5. Calculate output deposition velocity 
         rs = rs * rscale
         vd = 1./(ra + rd + rs)
-        
         endif 
 
         !!Step 3-2. normal case, surface layer over land 
@@ -158,7 +157,7 @@ module vd_gas_wesely
             else                                !rain surface
                 rlus = 1./(1./5000. + 1./(3.*rlu))                                                 !Follow Wesely et al.,(1989) eqn (12)
     !            rlus = 2000.+rlu
-                if (ilu == 1.) then
+                if (ilu == 1) then
                     rlus = 50.
                 endif
                 rluo = 1./(1./1000. + 1./(3.*rlu))                                                 !Follow Wesely et al.,(1989) eqn (13)
