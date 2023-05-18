@@ -36,7 +36,7 @@ module vd_aerosol_zhang
     !Step 0. Define variables type & constant values
     !!Step 0-1. Define global varibles type
         real    :: z2
-            real    :: zl
+        real    :: zl
         real    :: z0_f
         real    :: ustar
         real    :: diam
