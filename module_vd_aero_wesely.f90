@@ -46,7 +46,7 @@ contains
       !Step 0-2. Local varibles
       real :: power1               ! (-0.55 * diam / mean free path)
       real :: scf                  ! Cunningham correction for small particles
-      real :: vsed.                ! gravitational settling velocity. (m/s)
+      real :: vsed                 ! gravitational settling velocity. (m/s)
       real :: difbrwn              ! Brownian diffusivity
       real :: schmidt              ! Schmidt number
       real :: stokes               ! Stokes number
@@ -58,8 +58,8 @@ contains
       
       !Step 1. Calculate speed correction factor and sedimendation velocity
       power1 = amin1(7.6,0.55*diam/xmfp)
-      scf   = 1. + (2.514 + 0.8 * exp(-power1))*xmfp/diam
-      vsed  = rhop*g*(diam*diam)*scf/(18.*vabs)
+      scf    = 1. + (2.514 + 0.8 * exp(-power1))*xmfp/diam
+      vsed   = rhop*g*(diam*diam)*scf/(18.*vabs)
 
       !Step 2. Calcualte Brownian diffusivity, Schmidt number, and Stokes number
       difbrwn = boltz*ts*scf/(3.*pi*vabs*diam)
@@ -71,7 +71,7 @@ contains
       ra = amax1(ra,rmin)
 
       !Step 4. Calcualte deposition boundary layer resistance, Rd
-      sc23 = schmidt **(-2./3.)
+      sc23   = schmidt **(-2./3.)
       power2 = -3./stokes
       if (power2 < -37) then
          xinert = 10. **(-37.)
