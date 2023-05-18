@@ -11,6 +11,6 @@ module vd_constants
     real, parameter :: boltz = 1.38e-20  ! Boltzmann constant.                 (m^2*g/(s^2*K))
     real, parameter :: pi = 3.1415927    ! Circle constant.                    (1)
     real, parameter :: vair = 1.5e-5     ! kinematic viscosity of air          (m^2/s)   
-    real, parameter :: diffh2o = 2.3e-5  ! 
+    real, parameter :: diffh2o = 2.3e-5  ! molecular diffusivity of water.     (?)
 
 end module vd_constants
