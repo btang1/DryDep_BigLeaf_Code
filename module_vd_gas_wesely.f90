@@ -82,7 +82,7 @@ module vd_gas_wesely
         real, intent(in)    :: rlco
         real, intent(in)    :: rgss
         real, intent(in)    :: rgso
-        real, intent(out)    :: vd
+        real, intent(out)   :: vd
         
         !Step 0-2. Local varibles
         real :: ra                  ! atmospheric resistance           (?)
