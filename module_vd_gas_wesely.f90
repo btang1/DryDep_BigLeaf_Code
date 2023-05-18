@@ -1,5 +1,5 @@
 module vd_gas_wesely
-    use vd_constants
+    use vd_constants, only :: vk, rmin, rmax, vair, diffh2o
     implicit none
         
     contains
@@ -50,12 +50,13 @@ module vd_gas_wesely
         !    vd         deposition velocity                                          (unit = m/s)
 
         !Routines called:
-        !    none
+        !    vd_constants
 
         !Called by:
-        !    should be part of dry deposition code
+        !    future code of UFS dry deposition
 
         !Step 0. Define variables type & constant values
+        !Step 0-1. Input and output variables
         integer, intent(in) :: ilu 
         integer, intent(in) :: istress
         integer, intent(in) :: iwet
@@ -82,7 +83,21 @@ module vd_gas_wesely
         real, intent(in)    :: rgss
         real, intent(in)    :: rgso
         real, intent(out)    :: vd
-
+        
+        !Step 0-2. Local varibles
+        real :: ra                  ! atmospheric resistance           (?)
+        real :: schmidt             ! schmidt number                   (1)
+        real :: rd                  ! deposition layer resistance      (?)
+        real :: rs                  ! surface layer resistance         (?)
+        real :: rst                 ! stomatal resistance              (?)
+        real :: rm                  ! mesophll resistance              (?)
+        real :: ruc                 ! upper canopy resistance          (?)
+        real :: rlus                ! upper canopy resistance of so2.  (?)
+        real :: rluo                ! upper canopy resistance of o3.   (?)
+        real :: rdc                 ! buyant convection resistance.    (?)
+        real :: rlc                 ! lower canopy resistance          (?)
+        real :: rgs                 ! ground surface resistance        (?)
+        
         !Step 1. Calculate atmospheric resistance (due to turbulence diffusion), Ra
         ra = (log(deltaz/z0)-psih)/(vk * ustar)
         ra = amax1(ra,rmin)
@@ -103,7 +118,7 @@ module vd_gas_wesely
                 rs = amax1(rs,rmin)
             endif
             
-        !Step 3-1-1. Calculate output deposition velocity 
+        !Step 5. Calculate output deposition velocity 
         rs = rs * rscale
         vd = 1./(ra + rd + rs)
         
@@ -128,7 +143,7 @@ module vd_gas_wesely
         rm = amax1(rmin,rm)
         rm = amin1(rmax,rm)
 
-    !   !!Step 3-2-2.upper canopy resistance,Ruc
+        !!!Step 3-2-2.upper canopy resistance,Ruc
         if (iwet == 0) then                     !dry surface
             ruc = rlu/(henry/henso2+f0)
             ruc = amin1(rmax,ruc)
@@ -161,7 +176,7 @@ module vd_gas_wesely
 
         !!!Step 3-2-3.buyant convection and lower canopy resistance, Rdc & Rlc
         rdc = 100.*(1. +1000./(solflux +10.))                  !Follow Wesely (1989) eqn (5),but set terrain slope factor to be 1. 
-        rdc = amin1(rmax, rdd)
+        rdc = amin1(rmax, rdc)
 
         rlc = 1./(henry/(henso2*rlcs)+f0/rlco)                 !Follow Wesely et al. (1989) eqn (8)
         rlc = amin1(rmax,rlc)
@@ -179,6 +194,7 @@ module vd_gas_wesely
         vd = 1./(ra + rd + rs)
 
         return
+        
     end subroutine Gas_Wesely
 
 end module vd_gas_wesely
