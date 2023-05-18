@@ -44,7 +44,7 @@ contains
       real, intent(out) :: vd      ! deposition velocity                     (m/s)
       
       !Step 0-2. Local varibles
-      real :: power1               ! 
+      real :: power1               ! (-0.55 * diam / mean free path)
       real :: scf                  ! Cunningham correction for small particles
       real :: vsed.                ! gravitational settling velocity. (m/s)
       real :: difbrwn              ! Brownian diffusivity
