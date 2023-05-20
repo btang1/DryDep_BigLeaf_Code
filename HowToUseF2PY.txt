@@ -1,1 +1,25 @@
-# UFS_dry_deposition
+# F2PY
+f2py is a tool to allow fortran code to be called in python.
+in that way, we can visualize fortran code results.
+
+!!!
+Before run:
+!!!
+f2py is part of numpy library
+f2py is automatically installed in mac-mini, but not installed in anaconda
+use terminal to run f2py, do not use anaconda
+
+!!!
+How to run f2py
+!!!
+1. open a terminal, write a fortran code (AAA.f90) which is a module (BBB) contains a subroutine (CCC)
+2. type in terminal "f2py -c AAA.f90 -m AAA
+3. the above command will generate a AAA.so file in same folder where AAA.f90 located
+4. import AAA.so as a libray in python code. to do so
+    4-1. open bash mode in terminal, by type "bash"
+    4-2. open python mode in bash, by type "python"
+    4-3. call the AAA.so as a library, by type 
+        4-3-1. import numpy as np
+        4-3-2. import AAA
+        4-3-3. AAA.BBB(input_1, input_2, ... , input_n).  !notice we do not need to put an "output" in the (),but in subroutine we have output in ()
+        4-3-4. the result will be shown                   !note that model_file_name.module_name(), not subroutine name
