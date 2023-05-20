@@ -1,37 +1,8 @@
 module vd_aerosol_zhang
-    use vd_constants, only ::
-    implicit none
-
-    contains
-
-    subroutine Aerosol_Zhang(z2,zl,z0_f,ustar,diam,rhop,ts,t2,mlu,lai_f,vd)
     !Developed by Dr.Beiming Tang based on CAMx code
     !NOAA ARL UFS project
     !05/09/2023
-
-    !Modifications:
-
-    !Input arguments:
-    !    z2      reference height                     (m)
-    !    zl      Z/L stability parameter              (1)
-    !    z0_f    surface roughness                    (m)
-    !    ustar   friction velocity                    (m/s)
-    !    diam    log-mean sectional aerosol diameter  (m)
-    !    rhop    aerosol density                      (g/m^3)
-    !    ts      surface temperature                  (K)
-    !    t2      temperature at z2                    (K)
-    !    mlu     land use index                       (1)
-    !    lai_f   leaf area index                      (1)
-
-    !Output arguments:
-    !    vd      deposition velocity                  (cm/s)
-
-    !Routine called:
-    !    dryvd_pm
-
-    !Called by:
-    !    future dry deposition code in UFS
-
+    
     !LUC No.        Vegetation type
     !    1          water
     !    2          ice
@@ -58,39 +29,15 @@ module vd_aerosol_zhang
     !   23          swamp
     !   24          desert
     !   25          mixed wood forests
-    !   26          transitional forest
+    !   26          transitional forests
     
-    !Step 0. Define variables type & constant values
-    !!Step 0-1. Define global varibles type
-        real,intent(in)    :: z2
-        real,intent(in)    :: zl
-        real,intent(in)    :: z0_f
-        real,intent(in)    :: ustar
-        real,intent(in)    :: diam
-        real,intent(in)    :: rhop
-        real,intent(in)    :: ts
-        real,intent(in)    :: t2
-        integer,intent(in) :: mlu
-        real,intent(in)    :: lai_f
-        real,intent(out)   :: vd
-
-    !!Step 0-2. Define local variable type
-        real    :: vdp
-
-    !
-    !Main Program Start
-    !
-
-    !Step 1. Call drt deposition velocity algorithm
-        call dryvd_pm(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhop)
-        vd = vdp
+    use vd_constants, only :: ???
     
-        return
-        
-    end subroutine Aerosol_Zhang
+    implicit none
 
-
-    subroutine dryvd_pm(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhoprt)
+    contains
+    
+    subroutine Aerosol_Zhang(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhoprt)
     !Input arguments
     !    z2         meteorology reference height          (m)
     !    zl         Z/L stability parameter               (1)
@@ -276,7 +223,7 @@ module vd_aerosol_zhang
 
         return
     
-    end subroutine dryvd_pm
+    end subroutine Aerosol_Zhang
     
  end module vd_aerosol_zhang
 
