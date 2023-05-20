@@ -3,8 +3,8 @@ module vd_constants
 
     ! DEFINE CONSTANTS USED IN CALCULATIONS 
     real, parameter  :: vk = 0.4         ! Von Karman constant                       (1)
-    real, parameter :: rmin = 1.0        ! minimum resistance                        (?)
-    real, parameter :: rmax = 1.e5       ! maximum resistance                        (?)
+    real, parameter :: rmin = 1.0        ! minimum resistance                        (s/m)
+    real, parameter :: rmax = 1.e5       ! maximum resistance                        (s/m)
     real, parameter :: xmfp = 6.5e-8     ! mean free path                            (?)
     real, parameter :: g = 9.8           ! gravitational acceleration constant       (1)
     real, parameter :: vabs = 1.81e-2    ! dynamic viscosity of air                  (g/m-s)
