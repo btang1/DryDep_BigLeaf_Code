@@ -46,15 +46,15 @@ contains
       !Step 0-2. Local varibles
       real :: power1               ! (-0.55 * diam / mean free path)
       real :: scf                  ! Cunningham correction for small particles
-      real :: vsed                 ! gravitational settling velocity. (m/s)
+      real :: vsed                 ! gravitational settling velocity.        (m/s)
       real :: difbrwn              ! Brownian diffusivity
       real :: schmidt              ! Schmidt number
       real :: stokes               ! Stokes number
-      real :: ra                   ! Atmospheric resistance
+      real :: ra                   ! Atmospheric resistance                  (s/m)
       real :: sc23                 ! Schmidt number to power of (-2/3)
       real :: power2               ! -3/schmidt number      
       real :: xinert               ! 10 ^(-3/sstokes)
-      real :: rd                   ! boundary layer resistance
+      real :: rd                   ! boundary layer resistance               (s/m)
       
       !Step 1. Calculate speed correction factor and sedimendation velocity
       power1 = amin1(7.6,0.55*diam/xmfp)
