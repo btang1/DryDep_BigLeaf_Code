@@ -5,7 +5,6 @@ module vd_aerosol_zhang
     contains
 
     subroutine Aerosol_Zhang(z2,zl,z0_f,ustar,diam,rhop,ts,t2,mlu,lai_f,vd)
-
     !Developed by Dr.Beiming Tang based on CAMx code
     !NOAA ARL UFS project
     !05/09/2023
@@ -13,57 +12,25 @@ module vd_aerosol_zhang
     !Modifications:
 
     !Input arguments:
-    !    z2      reference height                     (unit = m)
-    !    zl      Z/L stability parameter              (unit = 1)
-    !    z0_f    surface roughness                    (unit = m)
-    !    ustar   friction velocity                    (unit = m/s)
-    !    diam    log-mean sectional aerosol diameter  (unit = m)
-    !    rhop    aerosol density                      (unit = g/m^3)
-    !    ts      surface temperature                  (unit = K)
-    !    t2      temperature at z2                    (unit = K)
-    !    mlu     land use index                       (unit = 1)
-    !    lai_f   leaf area index                      (unit = 1)
+    !    z2      reference height                     (m)
+    !    zl      Z/L stability parameter              (1)
+    !    z0_f    surface roughness                    (m)
+    !    ustar   friction velocity                    (m/s)
+    !    diam    log-mean sectional aerosol diameter  (m)
+    !    rhop    aerosol density                      (g/m^3)
+    !    ts      surface temperature                  (K)
+    !    t2      temperature at z2                    (K)
+    !    mlu     land use index                       (1)
+    !    lai_f   leaf area index                      (1)
 
     !Output arguments:
-    !    vd      deposition velocity                  (unit = cm/s)
+    !    vd      deposition velocity                  (cm/s)
 
     !Routine called:
     !    dryvd_pm
 
     !Called by:
     !    future dry deposition code in UFS
-
-    !Step 0. Define variables type & constant values
-    !!Step 0-1. Define global varibles type
-        real    :: z2
-        real    :: zl
-        real    :: z0_f
-        real    :: ustar
-        real    :: diam
-        real    :: rhop
-        real    :: ts
-        real    :: t2
-        integer :: mlu
-        real    :: lai_f
-        real    :: vd
-
-    !!Step 0-2. Define local variable type
-        real    :: vdp
-
-    !
-    !Main Program Start
-    !
-
-    !Step 1. Call drt deposition velocity algorithm
-        call dryvd_pm(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhop)
-        vd = vdp
-    
-        return
-        
-    end subroutine Aerosol_Zhang
-
-
-    subroutine dryvd_pm(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhoprt)
 
     !LUC No.        Vegetation type
     !    1          water
@@ -92,34 +59,62 @@ module vd_aerosol_zhang
     !   24          desert
     !   25          mixed wood forests
     !   26          transitional forest
+    
+    !Step 0. Define variables type & constant values
+    !!Step 0-1. Define global varibles type
+        real,intent(in)    :: z2
+        real,intent(in)    :: zl
+        real,intent(in)    :: z0_f
+        real,intent(in)    :: ustar
+        real,intent(in)    :: diam
+        real,intent(in)    :: rhop
+        real,intent(in)    :: ts
+        real,intent(in)    :: t2
+        integer,intent(in) :: mlu
+        real,intent(in)    :: lai_f
+        real,intent(out)   :: vd
 
+    !!Step 0-2. Define local variable type
+        real    :: vdp
+
+    !
+    !Main Program Start
+    !
+
+    !Step 1. Call drt deposition velocity algorithm
+        call dryvd_pm(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhop)
+        vd = vdp
+    
+        return
+        
+    end subroutine Aerosol_Zhang
+
+
+    subroutine dryvd_pm(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,vdp,diam,rhoprt)
     !Input arguments
-    !    z2         meteorology reference height          (unit = m)
-    !    zl         Z/L stability parameter               (unit = 1)
-    !    z0_f       surface roughness                     (unit = m)
-    !    ustar      friction velocity                     (unit = m/s)
-    !    t2         temperature at Z2                     (unit = K)
-    !    ts         surface temperature                   (unit = K)
-    !    lai_f      leaf area index                       (unit = 1)
-    !    mlu        land use type                         (unit = 1)
-    !    vdp        particle dry deposition velocity      (unit = m/s)
-    !    diam       log-mean sectional aerosol diameter   (unit = m)
-    !    rhoprt     aerosol density                       (unit = g/m^3) 
+    !    z2         meteorology reference height          (m)
+    !    zl         Z/L stability parameter               (1)
+    !    z0_f       surface roughness                     (m)
+    !    ustar      friction velocity                     (m/s)
+    !    t2         temperature at Z2                     (K)
+    !    ts         surface temperature                   (K)
+    !    lai_f      leaf area index                       (1)
+    !    mlu        land use type                         (1)
+    !    vdp        particle dry deposition velocity      (m/s)
+    !    diam       log-mean sectional aerosol diameter   (m)
+    !    rhoprt     aerosol density                       (g/m^3) 
 
-    !    ra         aerosol resistance                    (unit = s/m)
-    !    aest       parameter for calculating EIM         (unit = )
-    !    binsize    radius of a size bin                  (unit = )
-    !    eb         Brownian collection efficiency        (unit = )
-    !    eim        impaction collection efficiency       (unit = )
-    !    ein        interception collection efficiency    (unit = )
-    !    gama       parameter for calculating EB          (unit = )
-    !    pllp       leaf dimension for calculating EIN    (unit = )
+    !    ra         aerosol resistance                    (s/m)
+    !    aest       parameter for calculating EIM         (?)
+    !    binsize    radius of a size bin                  (?)
+    !    eb         Brownian collection efficiency        (?)
+    !    eim        impaction collection efficiency       (?)
+    !    ein        interception collection efficiency    (?)
+    !    gama       parameter for calculating EB          (?)
+    !    pllp       leaf dimension for calculating EIN    (?)
 
     !Output argument:
     !    vdp        deposition velocity                   (unit = m/s)
-
-        include 'camx.prm'        !I think we need to replace this with our ufs inputs
-        include 'deposit.inc'     !I think we need to replace this with our ufs inputs
 
     !Step 0. Define input variables type & value constant
     !!Step 0-1. Define global variables
@@ -136,7 +131,7 @@ module vd_aerosol_zhang
         real    :: rhopt
 
     !!Step 0-2. Define local varible
-        integer :: i
+        integer :: i                             !land category
         real    :: rhop
         real    :: ra
         real    :: pllp
