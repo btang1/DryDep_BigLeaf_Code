@@ -85,18 +85,18 @@ module vd_gas_wesely
         real, intent(out)   :: vd
         
         !Step 0-2. Local varibles
-        real :: ra                  ! atmospheric resistance           (?)
+        real :: ra                  ! atmospheric resistance           (s/m)
         real :: schmidt             ! schmidt number                   (1)
-        real :: rd                  ! deposition layer resistance      (?)
-        real :: rs                  ! surface layer resistance         (?)
-        real :: rst                 ! stomatal resistance              (?)
-        real :: rm                  ! mesophll resistance              (?)
-        real :: ruc                 ! upper canopy resistance          (?)
-        real :: rlus                ! upper canopy resistance of so2.  (?)
-        real :: rluo                ! upper canopy resistance of o3.   (?)
-        real :: rdc                 ! buyant convection resistance.    (?)
-        real :: rlc                 ! lower canopy resistance          (?)
-        real :: rgs                 ! ground surface resistance        (?)
+        real :: rd                  ! deposition layer resistance      (s/m)
+        real :: rs                  ! surface layer resistance         (s/m)
+        real :: rst                 ! stomatal resistance              (s/m)
+        real :: rm                  ! mesophll resistance              (s/m)
+        real :: ruc                 ! upper canopy resistance          (s/m)
+        real :: rlus                ! upper canopy resistance of so2.  (s/m)
+        real :: rluo                ! upper canopy resistance of o3.   (s/m)
+        real :: rdc                 ! buyant convection resistance.    (s/m)
+        real :: rlc                 ! lower canopy resistance          (s/m)
+        real :: rgs                 ! ground surface resistance        (s/m)
         
         !Step 1. Calculate atmospheric resistance (due to turbulence diffusion), Ra
         ra = (log(deltaz/z0)-psih)/(vk * ustar)
