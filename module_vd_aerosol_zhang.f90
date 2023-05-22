@@ -1,6 +1,6 @@
 module vd_aerosol_zhang
     
-    Use vd_constants, only ::
+    Use vd_constants, only ::xmfp,roarow,aa1,aa2,aa3,boltzk,dair,dh2o,aest,pllp1,pllp2,gama,lai_ref
 
     Implicit none
     
@@ -104,48 +104,16 @@ module vd_aerosol_zhang
             real    :: r1
             real    :: rs
             real    :: vdsize
-    
-        !!Step 0-3. Define constant values
-            real,parameter    :: aa1    = 1.257
-            real,parameter    :: aa2    = 0.4
-            real,parameter    :: aa3    = 1.1
-            real,parameter    :: amfp   = 6.53e-8                  !Lambda, mean free path for air molecules
-            real,parameter    :: roarow = 1.19                     ! air density at 20C, (unit = kg/m^3)
-            real,parameter    :: boltzk = 1.3806044503487214e-23
-            real,parameter    :: dair = 0.369*29.+6.29
-            real,parameter    :: dh2o = 0.369*18.+6.29
+   
 
-            real,dimension(26)    :: aest  
-            real,dimension(26)    :: pllp1                         !mim leaf dimension for each LUC
-            real,dimension(26)    :: pllp2                         !max leaf dimension for each LUC
-            real,dimension(26)    :: gama
-            real,dimension(26,15) :: lai_ref                       !reference LAI for zhang lu by month(and max/min)
-
-            aset  = (/100., 50.,100., 1.0, 0.8, 1.1, 0.8, 0.6, 1.0, 1.1,  &
-                       1.1, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.1, 1.2, 1.2,  &
-                       1.5, 50., 2.0, 50., 0.8, 0.8/)
-            pllp1 = (/-0.9,-0.9,-0.9, 2.0, 5.0, 2.0, 5.0, 5.0, 5.0, 5.0,  &
-                       5.0, 2.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0, 5.0, 2.0,  &
-                      10.0,-0.9,10.0,-0.9, 5.0, 5.0/)
-            pllp2 = (/-0.9,-0.9,-0.9, 2.0, 5.0, 5.0,10.0, 5.0,10.0, 5.0,  &
-                      10.0, 5.0, 5.0, 5.0, 5.0, 5.0,10.0,10.0,10.0, 5.0,  &
-                      10.0,-0.9,10.0,-0.9, 5.0, 5.0/)
-            gama  = (/ 0.5,0.54, 0.5,0.56,0.56,0.56,0.56,0.58,0.56,0.55,  &
-                      0.55,0.54,0.54,0.55,0.54,0.54,0.54,0.55,0.54,0.54,  &
-                      0.56,0.54,0.54,0.54,0.56,0.56/)
-
-        !!Step 0-4. Initialization
-            !particle density          
+        !!Step 0-3. Initialization       
             rhop  = rhoprt*1.0e-3                                  !Covert a unit from g/m^3 to kg/m^3
-
             vd   = 0.0    
             i    = mlu     
-
 
         !
         !Main Program Start
         !
-
 
         !Step 1. Calculate aerodynamic resistance, Ra 
             
@@ -157,7 +125,7 @@ module vd_aerosol_zhang
     
             ra = amax1(ra,5.0)
     
-            if (i == 1 .or. i == 3) then   !for water or inland lake
+            if (i == 1 .or. i == 3) then                                                !for water or inland lake
                 ra = amin1(ra,2000.)
             else
                 ra = amin1(ra,1000.)
@@ -187,16 +155,16 @@ module vd_aerosol_zhang
             prii     = 2.* 9.81 /(9. * amu)
             priiv    = prii * (rhop -roarow)
             vphil    = 0.
-            cfac     = 1. + amfp/binsize*(aa1+aa2*exp(-aa3*binsize/amfp))            !Follow Zhang et al., (2001) eqn (3)
-            taurel   = amax1(priiv*binsize**2*cfac/9.81,0)                  
+            cfac     = 1. + xmfp/binsize*(aa1+aa2*exp(-aa3*binsize/xmfp))            !Follow Zhang et al., (2001) eqn (3)
+            taurel   = xmax1(priiv*binsize**2*cfac/9.81,0)                  
 
-            !!Step 2-6. calculate stokes friction and diffusion coefficients                    !Same as Wesely method for aerosol
+            !!Step 2-6. calculate stokes friction and diffusion coefficients         !Same as Wesely method for aerosol
             amob     = 6. * 3.14 * amu *binsize /cfac
             diff     = boltzk *tave /amob                                  
             schm     = anu/diff                                                      !Follow Zhang et al., (2001)
 
             !!Step 2-7. calculate gravitational settling velocity
-            Vg    = taurel * 9.81                                                 !Follow Zhang et al., (2001) eqn (2)
+            vg    = taurel * 9.81                                                    !Follow Zhang et al., (2001) eqn (2)
 
 
         !Step 3. Calculate surface resistance, Rs
@@ -232,7 +200,7 @@ module vd_aerosol_zhang
 
         !Step 4. Calculate deposition velocity
             
-            vd  = Vg + 1./(ra + rs)                                                  !Follow Zhang et al.,(2001) eqn (1)
+            vd  = vg + 1./(ra + rs)                                                  !Follow Zhang et al.,(2001) eqn (1)
  
 
             return
