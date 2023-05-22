@@ -2,16 +2,23 @@ module vd_constants
     implicit none
 
     ! DEFINE CONSTANTS USED IN CALCULATIONS 
-    real, parameter  :: vk = 0.4         ! Von Karman constant                       (1)
+    real, parameter :: vk = 0.4          ! Von Karman constant                       (1)
     real, parameter :: rmin = 1.0        ! minimum resistance                        (s/m)
     real, parameter :: rmax = 1.e5       ! maximum resistance                        (s/m)
     real, parameter :: xmfp = 6.5e-8     ! mean free path                            (?)
     real, parameter :: g = 9.8           ! gravitational acceleration constant       (1)
     real, parameter :: vabs = 1.81e-2    ! dynamic viscosity of air                  (g/m-s)
     real, parameter :: boltz = 1.38e-20  ! Boltzmann constant.                       (m^2*g/(s^2*K))
+    real, parameter :: boltzk = 1.38e-23 ! Boltzmann constant                        (m^2*kg/(s^2*K))
     real, parameter :: pi = 3.1415927    ! Circle constant.                          (1)
     real, parameter :: vair = 1.5e-5     ! kinematic viscosity of air                (m^2/s)   
     real, parameter :: diffh2o = 2.3e-5  ! molecular diffusivity of water in air     (m^2/s)
+    real, parameter :: roarow = 1.19     ! air density at 20C                        (kg/m^3)
+    real, parameter :: aa1    = 1.257
+    real, parameter :: aa2    = 0.4
+    real, parameter :: aa3    = 1.1
+    real, parameter :: dair = 0.369*29.+6.29
+    real, parameter :: dh2o = 0.369*18.+6.29
 
     !Baseline resistances for Wesely (1989) == 11 land time * 5 seasons
     data rj  /9999.,  60., 120.,  70., 130., 100.,9999.,9999., 80., 100., 150.,   &
@@ -55,5 +62,24 @@ module vd_constants
               9999.,1000., 400., 400.,1000., 600.,9999.,9999., 800., 600., 600.,  &
               9999.,1000.,1000., 400.,1500., 600.,9999.,9999., 800.,1000., 800.,  &
               9999.,1000., 500., 500.,1500., 700.,9999.,9999., 600., 800., 800./ 
+    
+    !Define array of constants used in Zhang model
+    real,dimension(26)    :: aest  
+    real,dimension(26)    :: pllp1                         !mim leaf dimension for each LUC
+    real,dimension(26)    :: pllp2                         !max leaf dimension for each LUC
+    real,dimension(26)    :: gama
+    real,dimension(26,15) :: lai_ref                       !reference LAI for zhang lu by month(and max/min)
 
+    aset  = (/100., 50.,100., 1.0, 0.8, 1.1, 0.8, 0.6, 1.0, 1.1,  &
+                       1.1, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.1, 1.2, 1.2,  &
+                       1.5, 50., 2.0, 50., 0.8, 0.8/)
+    pllp1 = (/-0.9,-0.9,-0.9, 2.0, 5.0, 2.0, 5.0, 5.0, 5.0, 5.0,  &
+                       5.0, 2.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0, 5.0, 2.0,  &
+                      10.0,-0.9,10.0,-0.9, 5.0, 5.0/)
+    pllp2 = (/-0.9,-0.9,-0.9, 2.0, 5.0, 5.0,10.0, 5.0,10.0, 5.0,  &
+                      10.0, 5.0, 5.0, 5.0, 5.0, 5.0,10.0,10.0,10.0, 5.0,  &
+                      10.0,-0.9,10.0,-0.9, 5.0, 5.0/)
+    gama  = (/ 0.5,0.54, 0.5,0.56,0.56,0.56,0.56,0.58,0.56,0.55,  &
+                      0.55,0.54,0.54,0.55,0.54,0.54,0.54,0.55,0.54,0.54,  &
+                      0.56,0.54,0.54,0.54,0.56,0.56/)
 end module vd_constants
