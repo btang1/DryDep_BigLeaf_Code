@@ -111,10 +111,6 @@ module vd_aerosol_zhang
             vd   = 0.0    
             i    = mlu     
 
-        !
-        !Main Program Start
-        !
-
         !Step 1. Calculate aerodynamic resistance, Ra 
             
             if (zl >= 0) then
