@@ -67,17 +67,17 @@ module vd_aerosol_zhang
 
         !Step 0. Define input variables type & value constant
         !!Step 0-1. Input and output variables
-            real    :: z2
-            real    :: zl
-            real    :: z0_f
-            real    :: ustar
-            real    :: t2
-            real    :: ts
-            real    :: lai_f
-            integer :: mlu
-            real    :: diam
-            real    :: rhoprt
-            real    :: vd
+            real,intent(in)    :: z2
+            real,intent(in)    :: zl
+            real,intent(in)    :: z0_f
+            real,intent(in)    :: ustar
+            real,intent(in)    :: t2
+            real,intent(in)    :: ts
+            real,intent(in)    :: lai_f
+            integer,intent(in) :: mlu
+            real,intent(in)    :: diam
+            real,intent(in)    :: rhoprt
+            real,intent(out)    :: vd
 
         !!Step 0-2. Local variables
             integer :: i
