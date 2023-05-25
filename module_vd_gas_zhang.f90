@@ -1,5 +1,6 @@
 module vd_gas_zhang
-    use vd_constants, only :: dair,dh2o,rhoh2o,diffh2o,rmin,rmax_zhang,CP_A,CP_B,lai_ref
+    use vd_constants, only :: dair,dh2o,rhoh2o,diffh2o,rmin,rmax_zhang,CP_A,CP_B,lai_ref,gamst,gmag,Rac1,Rac2,  &
+                              RcutdO,RcutwO,RgO,RcutdS,RgS,rsmin,brs,tmin,tmax,topt,bvpd,psi1,psi2,sdmax
     implicit none
 
     contains
