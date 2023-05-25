@@ -362,15 +362,15 @@ module vd_gas_zhang
             rcuts_f = 100./(lai_f**0.5*ustar)
             rcuts_f = amax1(rcuts_f,20.)
         else if (ts < 272.15) then
-            rcuto_f = rcutdo(i)/(exp(0.03*rh)*lai_f**0.25*ustar)   !zhang et al., (2003) eqn (9a), CAMx code is wrong, should be 0.03 NOT 3
-            rcuts_f = rcutds(i)/(exp(0.03*rh)*lai_f**0.25*ustar)
+            rcuto_f = rcutdo(i)/(exp(3*rh)*lai_f**0.25*ustar)   !zhang et al., (2003) eqn (9a), CAMx code is wrong, should be 0.03 NOT 3
+            rcuts_f = rcutds(i)/(exp(3*rh)*lai_f**0.25*ustar)
             rcuto_f = amin1(rcuto_f*2.,rcuto_f*exp(0.2*(272.15-ts)))  !zhang et al., (2003) eqn (10b)
             rcuts_f = amin1(rcuts_f*2.,rcuts_f*exp(0.2*(272.15-ts))) 
             rcuto_f = amax1(rcuto_f,100.)
             rcuts_f = amax1(rcuts_f,100)
         else
-            rcuto_f = rcutdo(i)/(exp(0.03*rh)*lai_f**0.25*ustar)
-            rcuts_f = rcutds(i)/(exp(0.03*rh)*lai_f**0.25*ustar)
+            rcuto_f = rcutdo(i)/(exp(3*rh)*lai_f**0.25*ustar)
+            rcuts_f = rcutds(i)/(exp(3*rh)*lai_f**0.25*ustar)
             rcuto_f = amax(rcuto_f,100.)
             rcuts_f = amax(rcust_f,100.)
         endif
