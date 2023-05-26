@@ -146,14 +146,14 @@ module vd_constants
     real,  dimension(26)   :: RgO                        ! ground resistance for o3 (s/m)
     real,  dimension(26)   :: RcutdS                     ! Dry cuticle resistance of so2 (s/m)    
     real,  dimension(26)   :: RgS                        ! Ground resistance for SO2 (s/m)
-    real,  dimension(26)   :: rsmin                      ! Stomatal resistance related paramters
-    real,  dimension(26)   :: brs                        ! Stomatal resistance related paramters
-    real,  dimension(26)   :: tmin                       ! Stomatal resistance related paramters
-    real,  dimension(26)   :: tmax                       ! Stomatal resistance related paramters
-    real,  dimension(26)   :: topt                       ! Stomatal resistance related paramters
-    real,  dimension(26)   :: bvpd                       ! Stomatal resistance related paramters
-    real,  dimension(26)   :: psi1                       ! Stomatal resistance related paramters
-    real,  dimension(26)   :: psi2                       ! Stomatal resistance related paramters
+    real,  dimension(26)   :: rsmin                      ! minimum stomatal resistance 
+    real,  dimension(26)   :: brs                        ! empirical light response coefficient
+    real,  dimension(26)   :: tmin                       ! minimum temperature below which complete closure occurs (degree C)
+    real,  dimension(26)   :: tmax                       ! maximum temperature above which complete closure occurs (degree C)
+    real,  dimension(26)   :: topt                       ! optimum temperature of maximum stomatal opening (degree C)
+    real,  dimension(26)   :: bvpd                       ! water-vapor-pressure deficit constant     (k/Pa)
+    real,  dimension(26)   :: psi1                       ! parameter specify leaf-water potential dependency
+    real,  dimension(26)   :: psi2                       ! parameter specify leaf-water potential dependency
     real,  dimension(26)   :: sdmax                      ! Maximum snow depth over which snow fraction for leaves is 1.0,  &
                                                          ! Snow fraction for ground is treated 2 times of that for leaves
     
