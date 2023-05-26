@@ -217,7 +217,7 @@ module vd_gas_zhang
         end if
 
 
-    !Step 3. Calculate stomatal resistance for water vapor only,Rst (water)
+    !Step 3. Calculate stomatal resistance for water vapor only, all other species in step 9, Rst(water)
     !!Step 3-0. set big value for stomatal resistance when stoma are closed.
         rst = 99999.9
 
@@ -301,7 +301,7 @@ module vd_gas_zhang
           coedew = 0.1
       end if
 
-      dq = 0.622/1000.*es(ts)*(1.-rh)*100     
+      dq = 0.622/1000.*es(ts)*(1.-rh)*1000.     
       dq = amax1(0.0001,dq)
       usmin = 1.5/dq*coedew
 
@@ -336,8 +336,8 @@ module vd_gas_zhang
 
     !!Step 6-2. Calcualte ground resistance for SO2
         if (i == 2) then
-            rgs_f = amin1(rgs(i)*(273.15-ts),500))
-            rgs_f = amax1(rgs(i),100)
+            rgs_f = amin1(rgs(i)*(273.15-ts),500.))
+            rgs_f = amax1(rgs(i),100.)
         else if (i >= 4 .and. is_rain) then
             rgs_f = 50.
         else if (i >= 4 .and. is_dew) then
@@ -397,7 +397,7 @@ module vd_gas_zhang
       !Step 9. Calculate stamatal resistance for each species from the ratio of diffusivity of water vapor to the gas species
          dvh2o = 0.001*ts**1.75 * sqrt((29.+18.)/29./18.)
          dvh2o = dvh2o/(dair**0.3333 + dh2o **0.3333)**2
-         rs    = rst*dvh2o + rm
+         rs    = rst*dvh2o/di + rm
          
          
       !Step 10. rescale cuticle and ground resistances for each species
@@ -442,7 +442,7 @@ module vd_gas_zhang
          rc = (1.- Wst)/Rs + 1./(Racz + Rg) + 1./Rcut
          rc = amax1(10.0,1/rc)
          if (io3 == 1 .and. i == 1) then
-             rc = 1./(1.e-4 + 5.e-6*henry *ustar *(ts-273.15)**3)
+             rc = 1./(1.e-4 + 5.e-6*henry *ustar *(ts-273.15)**3.)
              rc = amax1(rc, 1500.)
          end if
          rc = rc*rscalsp                                         !scale for extremely soluble gas
