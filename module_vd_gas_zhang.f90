@@ -115,7 +115,7 @@ module vd_gas_zhang
         integer   :: i                            !land use type index            (1)
         logical   :: is_rain                      !rain flag                      (1)
         logical   :: is_dew                       !dew flag                       (1)
-        real*8    :: es                           !                               (mb)        
+        real*8    :: es                           !satuation water pressure                          (mb)        
         real*8    :: temp                                                 
         real*8    :: ra                                                  
         real*8    :: rst                                                   
@@ -156,7 +156,7 @@ module vd_gas_zhang
         real*8    :: rgs_f
         real*8    :: rcuto_f
         real*8    :: rcuts_f
-        real*8    :: fsnow
+        real*8    :: fsnow           !snow cover fraction
         real*8    :: rsnows
         real*8    :: vi
         real*8    :: rb
@@ -253,33 +253,33 @@ module vd_gas_zhang
          rsun      = rsmin(i) + brs(i) *rsmin(i)/psun
          gshad     = 1./rshad
          gsun      = 1./rsun
-         fsun      = 2.*coszen*(1.-exp(-0.5*lat_f/coszen)                  ! sublit leaf area
-         fshd      = lai_f -fsun                                           ! shaded leaf area 
+         fsun      = 2.*coszen*(1.-exp(-0.5*lat_f/coszen)        ! sublit leaf area
+         fshd      = lai_f -fsun                                 ! shaded leaf area 
 
      !!Step 3-3. Stomatal conductance before including effects of temperature, vapor pressure deficit, and water stress.
          gspar     = fsun*gsun + fshd*gshad
          
          !!!Step 3-3-1. function for temparature effect
          t  = ts -273.15
-         bt = (tmax(i) -topt(i))/(tmax(i) - tmin(i))
+         bt = (tmax(i) -topt(i))/(tmax(i) - tmin(i))             !in Zhang et al (2003) eqn (6a)&(6b), the denominator used is topt-tmin,NOT tmax-tmin???
          gt = (tmax(i) - t)/(tmax(i) -topt(i))
          gt = gt **bt
          gt = gt*(T-tmin(i))/(topt(i)-tmin(i))
 
          !!!Step 3-3-2. function for vapor pressure deficit
-         d0 = es(ts)*(1.-rh)/10.     
-         gd = 1.- bvpd(i)*d0
+         d0 = es(ts)*(1.-rh)/10.                                 !Zhang et al.,(2003) eqn (6d)
+         gd = 1.- bvpd(i)*d0                                     !Zhang et al.(2003) eqn (6c)
 
          !!!Step 3-3-3. functiion for water stress effect
-         psi = -0.72-0.0013*srad
-         gw  = (psi-psi2(i))/(psi1(i)-psi2(i))
-         if (gw > 1.) then
+         psi = -0.72-0.0013*srad                                 !Zhang et al.,(2003) eqn (6f)
+         gw  = (psi-psi2(i))/(psi1(i)-psi2(i))                   !Zhang et al.,(2003) eqn (6e)
+         if (gw > 1.) then      !this means psi > psi 1
              gw = 1.0
          end if
          if (gw < 0.1) then
              gw = 0.1
          end if
-         if (gd > 1.) then
+         if (gd > 1.) then      !this means psi > psi 1
              gd = 1.0
          end if
          if (gd < 0.1) then
@@ -287,7 +287,7 @@ module vd_gas_zhang
          end if
 
       !!Step 3-4. Stomatal resistance for water vapor
-          rst = 1.0/(GSPAR*gt*gd*gw)
+          rst = 1.0/(GSPAR*gt*gd*gw)                             !Follow Zhang et al., (2003) eqn (6), notice it omint "di/dv" terms, which added in step 9.
       end if
       
       
@@ -314,9 +314,9 @@ module vd_gas_zhang
       end if
       
       !!Step 4-2.Decide fraction of stomatal blocking due to wet conditions
-      Wst = 0
-      if ((is_dew .or. is_rain) .and. srad > 200.) then
-          Wst = (srad -200.)/800.
+      Wst = 0                                                      !for dry cases, Zhang et al.,(2003) eqn (5)
+      if ((is_dew .or. is_rain) .and. srad > 200.) then            !for rain and dew cases, with strong solar radiations
+          Wst = (srad -200.)/800.                                  !Zhang et al., (2003) eqn (5)
           Wst = amin1(wst, 0.5)
       end if 
 
@@ -335,14 +335,14 @@ module vd_gas_zhang
         end if
 
     !!Step 6-2. Calcualte ground resistance for SO2
-        if (i == 2) then
+        if (i == 2) then                                             !land type = ice
             rgs_f = amin1(rgs(i)*(273.15-ts),500.))
             rgs_f = amax1(rgs(i),100.)
-        else if (i >= 4 .and. is_rain) then
+        else if (i >= 4 .and. is_rain) then                          !rain case, zhang et al.,(2003) eqn (8b)
             rgs_f = 50.
-        else if (i >= 4 .and. is_dew) then
+        else if (i >= 4 .and. is_dew) then                           !dew case, zhang et al.,(2003) eqn (8b)
             rgs_f = 100.
-        else if (i >= 4 .and. ts< 272.15) then
+        else if (i >= 4 .and. ts< 272.15) then                       !all other soil cases
             rgs_f = amin1(rgs(i)*2.,rgs(i)*exp(0.2*(272.15-ts)))
         else
             rgs_f = rgs(i)
@@ -361,31 +361,31 @@ module vd_gas_zhang
             rcuto_f = rcutwo(i)/(lai_f**0.5*ustar)                    !Zhang et al.,(2003) eqn (9b)
             rcuts_f = 100./(lai_f**0.5*ustar)
             rcuts_f = amax1(rcuts_f,20.)
-        else if (ts < 272.15) then
+        else if (ts < 272.15) then                                    !this is <1 degree C case, resistance increased by 2 times
             rcuto_f = rcutdo(i)/(exp(3*rh)*lai_f**0.25*ustar)         !Zhang et al., (2003) eqn (9a),Notice in paper use RH precentage, here use RH 0-1
             rcuts_f = rcutds(i)/(exp(3*rh)*lai_f**0.25*ustar)
             rcuto_f = amin1(rcuto_f*2.,rcuto_f*exp(0.2*(272.15-ts)))  !Zhang et al., (2003) eqn (10b)
             rcuts_f = amin1(rcuts_f*2.,rcuts_f*exp(0.2*(272.15-ts))) 
             rcuto_f = amax1(rcuto_f,100.)
             rcuts_f = amax1(rcuts_f,100.)
-        else
-            rcuto_f = rcutdo(i)/(exp(3*rh)*lai_f**0.25*ustar)
+        else                                                          !this is normal case
+            rcuto_f = rcutdo(i)/(exp(3*rh)*lai_f**0.25*ustar)         !Zhang et al., (2003) eqn (9a),Notice in paper use RH precentage, here use RH 0-1
             rcuts_f = rcutds(i)/(exp(3*rh)*lai_f**0.25*ustar)
             rcuto_f = amax1(rcuto_f,100.)
             rcuts_f = amax1(rcust_f,100.)
         end if
 
      !Step 6&7 supplemental.if snow occurs, Rg and Rcut are adjusted by snow cover fraction
-        fsnow = sd/sdmax(i)
-        fsnow = amin1(1.0,fsnow)                                !snow cover fraction for leaves
+        fsnow = sd/sdmax(i)                                           !zhang et el.,(2003) eqn (10e)
+        fsnow = amin1(1.0,fsnow)                                      !snow cover fraction for leaves
         if (fsnow > 0.0001 .and. i >= 4) then
-            rsnows = amin1(70.*(275.15-ts),500.)                !zhang et al., (2003) eqn (8a)
+            rsnows = amin1(70.*(275.15-ts),500.)                      !zhang et al., (2003) eqn (8a)
             rsnows = amax1(rsnows,100.)
-            rcuts_f = 1.0/((1.-fsnow)/rcuts_f +fsnow/rsnows)    !zhang et al., (2003) eqn (10d)
-            rcuto_f = 1.0/((1.-fsnow)/rcuto_f +fsnow/2000.)
-            fsnow = amin1(1.0,fsnow*2.)                         !snow cover fraction for ground
+            rcuts_f = 1.0/((1.-fsnow)/rcuts_f +fsnow/rsnows)          !zhang et al., (2003) eqn (10d)
+            rcuto_f = 1.0/((1.-fsnow)/rcuto_f +fsnow/2000.).          !ozone over snow and ice, rsnowo == 2000
+            fsnow = amin1(1.0,fsnow*2.)                               !zhang et al., (2003) eqn (10c), for ground fsnow multiply by 2.
             rgs_f = 1.0/((1.-fsnow)/rgs_f + fsnow/rsnows)
-            rgo_f = 1.0/((1.-fsnow)/rgo_f + fsnow/2000.)
+            rgo_f = 1.0/((1.-fsnow)/rgo_f + fsnow/2000.)              !ozone over snow and ice, rsnowo == 2000
          end if
  
  
@@ -397,41 +397,41 @@ module vd_gas_zhang
       !Step 9. Calculate stamatal resistance for each species from the ratio of diffusivity of water vapor to the gas species
          dvh2o = 0.001*ts**1.75 * sqrt((29.+18.)/29./18.)
          dvh2o = dvh2o/(dair**0.3333 + dh2o **0.3333)**2
-         rs    = rst*dvh2o/di + rm
+         rs    = rst*dvh2o/di + rm                                     !zhang et al.(2003) eqn (6), Notice here if multiple by dvh2o/di
          
          
       !Step 10. rescale cuticle and ground resistances for each species
-         rcut = 1./(alpha/rcuts_f + beta/rcuto_f)
-         rg   = 1./(alpha/rgs_f + beta/rgo_f)
+         rcut = 1./(alpha/rcuts_f + beta/rcuto_f)                      !Zhang et al.,(2003) eqn (4)
+         rg   = 1./(alpha/rgs_f + beta/rgo_f)                          !Zhang et al.,(2003) eqn (4)
 
 
       !Step 11. bi-directional NH3 flux calculation
           if (inh3 == 1) then
-              if (lai_f < 0.5) then       !set a minimum lai for stomatal exchange
+              if (lai_f < 0.5) then                                    !set a minimum lai for stomatal exchange
                   x_st = 0.D0
               else
                   x_st = (cp_a/t2)*exp(-cp_b/t2)*gamst(i)
               end if
 
-              if (sd > 0) then             !if there is snow cover
+              if (sd > 0) then                                         !if there is snow cover
                   x_g = 0.D0
               else
                   x_g = (cp_a/ts)*exp(-cp_b/ts)*gamg(i)
               end if
              
               rabi  = 1.D0/(ra+rb)
-              rsi   = (1.D0 - Wst)/Rs        ! need verify source??
+              rsi   = (1.D0 - Wst)/Rs        
               racgi = 1.D0/(racz + rg)
               rcuti = 1.D0/rcut
 
               if (i >= 13 .and. i <= 20) then
                   rc = rsi + racgi +rcuti
-                  rc = amax1(10.0,1./rc)                      !set minimum surface resistance as 10 (s/m)
+                  rc = amax1(10.0,1./rc)                               !set minimum surface resistance as 10 (s/m)
                   vd = 1.D0/(ra + rb + rc)
                   f_net = 0.D0
               else
                   x_c   = ((c_nh3*rabi) + (x_st*rsi) + (x_g*racgi))/(rabi +rsi +racgi + rcuti)
-                  f_net = -(c_nh3 -x_c) * rabi                !net flux (ug/m^2-s), positive flux --> emissions
+                  f_net = -(c_nh3 -x_c) * rabi                         !net flux (ug/m^2-s), positive flux --> emissions
                   vd    = max(-f_net/c_nh3, 0.D0)
                   f_net = max(f_net,0.D0)
               end if
@@ -439,16 +439,16 @@ module vd_gas_zhang
            end if
 
       !Step 12. Calculate total surface resistance
-         rc = (1.- Wst)/Rs + 1./(Racz + Rg) + 1./Rcut
+         rc = (1.- Wst)/Rs + 1./(Racz + Rg) + 1./Rcut                  !Zhang et al.,(2003) eqn (2)&(3)
          rc = amax1(10.0,1/rc)
          if (io3 == 1 .and. i == 1) then
              rc = 1./(1.e-4 + 5.e-6*henry *ustar *(ts-273.15)**3.)
              rc = amax1(rc, 1500.)
          end if
-         rc = rc*rscalsp                                         !scale for extremely soluble gas
+         rc = rc*rscalsp                                               !scale for extremely soluble gas
 
        !Step 13. calculate dry deposition velocity
-           vd = 1./(ra+rb+rc)
+           vd = 1./(ra+rb+rc)                                          !Zhang et al.,(2003) eqn (1)
 
     return
     
