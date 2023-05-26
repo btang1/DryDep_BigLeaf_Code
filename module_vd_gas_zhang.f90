@@ -115,10 +115,10 @@ module vd_gas_zhang
         integer   :: i                            !land use type index            (1)
         logical   :: is_rain                      !rain flag                      (1)
         logical   :: is_dew                       !dew flag                       (1)
-        real*8    :: es                           !satuation water pressure                          (mb)        
+        real*8    :: es                           !satuation water pressure       (mb)        
         real*8    :: temp                                                 
-        real*8    :: ra                                                  
-        real*8    :: rst                                                   
+        real*8    :: ra                           !aerodynamic resistance                                               
+        real*8    :: rst                          !stomatal resistance  
         real*8    :: rdu                                                  
         real*8    :: rdv                                                  
         real*8    :: ww                           
@@ -143,12 +143,12 @@ module vd_gas_zhang
         real*8    :: t
         real*8    :: bt
         real*8    :: gt
-        real*8    :: d0             !              (kPa)
+        real*8    :: d0                            !                               (kPa)
         real*8    :: gd
         real*8    :: psi
         real*8    :: gw
         real*8    :: coedew
-        real*8    :: dg              !              (g/kg)
+        real*8    :: dg                            !                               (g/kg)
         real*8    :: usmin
         real*8    :: wst
         real*8    :: racz
@@ -156,27 +156,27 @@ module vd_gas_zhang
         real*8    :: rgs_f
         real*8    :: rcuto_f
         real*8    :: rcuts_f
-        real*8    :: fsnow           !snow cover fraction
-        real*8    :: rsnows
+        real*8    :: fsnow                         !snow cover fraction             (0-1)
+        real*8    :: rsnows                        !snow resistance
         real*8    :: vi
-        real*8    :: rb
+        real*8    :: rb                            !sub-layer resistance
         real*8    :: dvh2o
-        real*8    :: rs
-        real*8    :: rcut
-        real*8    :: rg
-        real*8    :: rc
-        real*8    :: x_st                                  !Compensation point conc (ug/m^3)
-        real*8    :: x_g                                   !Compensation point conc (ug/m^3)        
-        real*8    :: x_c                                   !Compensation point conc (ug/m^3)
-        real*8    :: Rabi                                  !Inverse resistance terms
-        real*8    :: Rsi                                   !Inverse resistance terms
-        real*8    :: Racgi                                 !Inverse resistance terms
-        real*8    :: Rcuti                                 !Inverse resistance terms
+        real*8    :: rs                            !sum of rst and rm
+        real*8    :: rcut                          !cutical resistance
+        real*8    :: rg                            !ground resistance
+        real*8    :: rc                            !sum of surface resistance
+        real*8    :: x_st                          !Compensation point conc          (ug/m^3)
+        real*8    :: x_g                           !Compensation point conc          (ug/m^3)        
+        real*8    :: x_c                           !Compensation point conc          (ug/m^3)
+        real*8    :: Rabi                          !Inverse resistance terms for Ra
+        real*8    :: Rsi                           !Inverse resistance terms for Rs
+        real*8    :: Racgi                         !Inverse resistance terms for Racz
+        real*8    :: Rcuti                         !Inverse resistance terms for Rcut
         
         
     !Step 1. Initialization 
     !!Step 1-1. Calculate snow depth 
-        sd          = snow*1000.                           !*100 for m->cm, *10 for SWE->depth
+        sd          = snow*1000.                                    !*100 for m->cm, *10 for SWE->depth
 
     !!Step 1-2. Calcualte precipitation rate 
         volrat      = pp/rhoh2o
@@ -185,13 +185,13 @@ module vd_gas_zhang
     !!Step 1-3. Calculate mesophyll resistance, Rm
         alpha       = henry/henso2
         beta        = f0
-        rm          = 1./(henry/3000/ + 100.*f0)           !mesophyll resistance follow Wesely et al.,(1989) eqn (6)
+        rm          = 1./(henry/3000/ + 100.*f0)                    !mesophyll resistance follow Wesely et al.,(1989) eqn (6)
         rm          = amax1(rmin, rm)
         rm          = amin1(rmax_zhang, rm)
 
     !!Step 1-4. Calculate diffusivity of gas species
-        di          = diffh2o/diffrat                      !unit = m^2/s
-        di          = di*1.e4                              !unit = cm^2/s
+        di          = diffh2o/diffrat                               !unit = m^2/s
+        di          = di*1.e4                                       !unit = cm^2/s
         
     !!Step 1-5. Define function for saturation vaport pressure 
         es(temp)    = 6.108*EXP(17.27 * (temp - 273.16)/(temp - 35.86))
@@ -203,14 +203,14 @@ module vd_gas_zhang
 
     !Step 2. Calculate aerodynamic resistance above canopy, Ra
         if (zl >= 0) then
-            ra = (0.74*log(z2/z0_f) + 4.7 *zl)/(0.4*ustar)                          !source of this equation unclear
+            ra = (0.74*log(z2/z0_f) + 4.7 *zl)/(0.4*ustar)         !source of this equation unclear
         else
             ra = 0.74*(log(z2/z0_f) - 2*log((1+sqrt(1-9.*zl))*0.5))/(0.4*ustar)     !source of this equation unclear
         endif
 
         ra = amax1(ra,5.0)
     
-        if (i == 1 .or. i == 3) then                                                !for water or inland lake
+        if (i == 1 .or. i == 3) then                               !for water or inland lake
             ra = amin1(ra,2000.)
         else
             ra = amin1(ra,1000.)
@@ -236,9 +236,9 @@ module vd_gas_zhang
             ratio  = amin1(0.9,srad/(rv+rn))
             sv     = ratio*rv
             fv     = amin1(0.99,(0.9-ratio)/0.7)
-            fv     = amax1(0.01,rdu/rv*(1.0-fv**0.6667)                  ! fraction of PAR in the direct beam
-            pardir = fv * sv                                             ! par from direct radiation
-            pardif = sv - pardir                                         ! Par from diffuse radiation            
+            fv     = amax1(0.01,rdu/rv*(1.0-fv**0.6667)           ! fraction of PAR in the direct beam
+            pardir = fv * sv                                      ! par from direct radiation
+            pardif = sv - pardir                                  ! Par from diffuse radiation            
 
      !!Step 3-2. Calculate sublit and shaded leaf area, PAR for sublit and shaded leaves
          if (lai_f > 2.5 .and. srad > 200.) then
@@ -253,26 +253,26 @@ module vd_gas_zhang
          rsun      = rsmin(i) + brs(i) *rsmin(i)/psun
          gshad     = 1./rshad
          gsun      = 1./rsun
-         fsun      = 2.*coszen*(1.-exp(-0.5*lat_f/coszen)        ! sublit leaf area
-         fshd      = lai_f -fsun                                 ! shaded leaf area 
+         fsun      = 2.*coszen*(1.-exp(-0.5*lat_f/coszen)         ! sublit leaf area
+         fshd      = lai_f -fsun                                  ! shaded leaf area 
 
      !!Step 3-3. Stomatal conductance before including effects of temperature, vapor pressure deficit, and water stress.
          gspar     = fsun*gsun + fshd*gshad
          
          !!!Step 3-3-1. function for temparature effect
          t  = ts -273.15
-         bt = (tmax(i) -topt(i))/(tmax(i) - tmin(i))             !in Zhang et al (2003) eqn (6a)&(6b), the denominator used is topt-tmin,NOT tmax-tmin???
+         bt = (tmax(i) -topt(i))/(tmax(i) - tmin(i))              !in Zhang et al (2003) eqn (6a)&(6b), the denominator used is topt-tmin,NOT tmax-tmin???
          gt = (tmax(i) - t)/(tmax(i) -topt(i))
          gt = gt **bt
          gt = gt*(T-tmin(i))/(topt(i)-tmin(i))
 
          !!!Step 3-3-2. function for vapor pressure deficit
-         d0 = es(ts)*(1.-rh)/10.                                 !Zhang et al.,(2003) eqn (6d)
-         gd = 1.- bvpd(i)*d0                                     !Zhang et al.(2003) eqn (6c)
+         d0 = es(ts)*(1.-rh)/10.                                  !Zhang et al.,(2003) eqn (6d)
+         gd = 1.- bvpd(i)*d0                                      !Zhang et al.(2003) eqn (6c)
 
          !!!Step 3-3-3. functiion for water stress effect
-         psi = -0.72-0.0013*srad                                 !Zhang et al.,(2003) eqn (6f)
-         gw  = (psi-psi2(i))/(psi1(i)-psi2(i))                   !Zhang et al.,(2003) eqn (6e)
+         psi = -0.72-0.0013*srad                                  !Zhang et al.,(2003) eqn (6f)
+         gw  = (psi-psi2(i))/(psi1(i)-psi2(i))                    !Zhang et al.,(2003) eqn (6e)
          if (gw > 1.) then      !this means psi > psi 1
              gw = 1.0
          end if
@@ -287,7 +287,7 @@ module vd_gas_zhang
          end if
 
       !!Step 3-4. Stomatal resistance for water vapor
-          rst = 1.0/(GSPAR*gt*gd*gw)                             !Follow Zhang et al., (2003) eqn (6), notice it omint "di/dv" terms, which added in step 9.
+          rst = 1.0/(GSPAR*gt*gd*gw)                              !Follow Zhang et al., (2003) eqn (6), notice it omint "di/dv" terms, which added in step 9.
       end if
       
       
