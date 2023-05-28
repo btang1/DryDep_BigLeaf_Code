@@ -103,7 +103,6 @@ module vd_aerosol_zhang
             real    :: ein
             real    :: r1
             real    :: rs
-            real    :: vdsize
    
 
         !!Step 0-3. Initialization       
@@ -152,7 +151,7 @@ module vd_aerosol_zhang
             priiv    = prii * (rhop -roarow)
             vphil    = 0.
             cfac     = 1. + xmfp/binsize*(aa1+aa2*exp(-aa3*binsize/xmfp))            !Follow Zhang et al., (2001) eqn (3)
-            taurel   = xmax1(priiv*binsize**2*cfac/9.81,0)                  
+            taurel   = amax1(priiv*binsize**2*cfac/9.81,0)                  
 
             !!Step 2-6. calculate stokes friction and diffusion coefficients         !Same as Wesely method for aerosol
             amob     = 6. * 3.14 * amu *binsize /cfac
