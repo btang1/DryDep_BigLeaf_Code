@@ -197,7 +197,6 @@ module vd_aerosol_emerson
             
             vd  = vg + 1./(ra + rs)                                                  !Follow Zhang et al.,(2001) eqn (1)
  
-
             return
 
             end subroutine aerosol_emerson
