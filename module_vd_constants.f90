@@ -27,6 +27,14 @@ module vd_constants
                                              ! constant B for compensation point Eq (K)
   
     ! Baseline resistances used in Wesely model  (11 land time * 5 seasons)
+    real :: rj(55,1)
+    real :: rlu(55,1)
+    real :: rac(55,1)
+    real :: rgss(55,1)
+    real :: rgso(55,1)
+    real :: rlcs(55,1)
+    real :: rlco(55,1)
+    
     data rj  /9999.,  60., 120.,  70., 130., 100.,9999.,9999., 80., 100., 150.,   &
               9999.,9999.,9999.,9999., 250., 500.,9999.,9999.,9999.,9999.,9999.,  &
               9999.,9999.,9999.,9999., 250., 500.,9999.,9999.,9999.,9999.,9999.,  &
