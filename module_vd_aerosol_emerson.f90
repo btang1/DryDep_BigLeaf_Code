@@ -1,6 +1,6 @@
 module vd_aerosol_emerson
     
-    Use vd_constants, only ::xmfp,roarow,aa1,aa2,aa3,boltzk,aest,pllp1,pllp2,lai_ref
+    Use vd_constants, only : xmfp,roarow,aa1,aa2,aa3,boltzk,aest,pllp1,pllp2,lai_ref
 
     Implicit none
     
