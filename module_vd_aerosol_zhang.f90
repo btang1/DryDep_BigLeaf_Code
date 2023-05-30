@@ -6,7 +6,7 @@ module vd_aerosol_zhang
     
     contains
 
-    subroutine aerosol_zhang(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,diam,rhoprt,vd)
+    subroutine aerosol_zhang(z2,zl,z0_f,ustar,t2,ts,lai_f,mlu,diam,rhoprt,vd)
 
         !Developed by Dr. Beiming Tang based on CAMx code
         !NOAA ARL UFS project
@@ -129,7 +129,7 @@ module vd_aerosol_zhang
         !Step 2. Calculate settling velocity, Vg 
 
             !!Step 2-1. Calculate leaf dimension 
-            if (lai_ref(i,15) == lat_ref(i,14)) then    
+            if (lai_ref(i,15) == lai_ref(i,14)) then    
                 pllp = pllp2(i)
             else
                 pllp = pllp2(i) - (lai_f-lai_ref(i,14))/(lai_ref(i,15)-lai_ref(i,14)+1.e-10)*(pllp2(i)-pllp1(i))
@@ -151,7 +151,7 @@ module vd_aerosol_zhang
             priiv    = prii * (rhop -roarow)
             vphil    = 0.
             cfac     = 1. + xmfp/binsize*(aa1+aa2*exp(-aa3*binsize/xmfp))            !Follow Zhang et al., (2001) eqn (3)
-            taurel   = amax1(priiv*binsize**2*cfac/9.81,0)                  
+            taurel   = amax1(priiv*binsize**2*cfac/9.81,0.0)                  
 
             !!Step 2-6. calculate stokes friction and diffusion coefficients         !Same as Wesely method for aerosol
             amob     = 6. * 3.14 * amu *binsize /cfac
@@ -189,6 +189,7 @@ module vd_aerosol_zhang
             r1       = exp(-st**0.5)                                                 !Follow Zhang et al.,(2001) eqn (9)
             if (r1 < 0.5) then
                 r1   = 0.5
+            end if
 
             !!Step 3-3. Calculate surface resistance, Rs
             rs       = 1./(3.*ustar*r1*(eb + eim + ein))                             !Follow Zhang et al.,(2001) eqn (5). where epsilon = 3
