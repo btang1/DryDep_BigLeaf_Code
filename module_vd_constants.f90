@@ -26,7 +26,7 @@ module vd_constants
     real*8,parameter :: CP_B = 10378.D0      ! Parameters for Bi-Di NH3 drydep, Whaley et al., (2018), &
                                              ! constant B for compensation point Eq (K)
   
-    ! Baseline resistances used in Wesely model  (11 land time * 5 seasons)
+    ! Baseline resistances used in Wesely gas model  (11 land time * 5 seasons)
     real :: rj(55,1)
     real :: rlu(55,1)
     real :: rac(55,1)
