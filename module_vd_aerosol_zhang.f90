@@ -1,6 +1,6 @@
 module vd_aerosol_zhang
     
-    Use vd_constants, only ::xmfp,roarow,aa1,aa2,aa3,boltzk,dair,dh2o,aest,pllp1,pllp2,gama,lai_ref
+    Use vd_constants, only : xmfp,roarow,aa1,aa2,aa3,boltzk,dair,dh2o,aest,pllp1,pllp2,gama,lai_ref
 
     Implicit none
     
