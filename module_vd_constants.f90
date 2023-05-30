@@ -27,13 +27,13 @@ module vd_constants
                                              ! constant B for compensation point Eq (K)
   
     ! Baseline resistances used in Wesely gas model  (11 land time * 5 seasons)
-    real :: rj(55,1)
-    real :: rlu(55,1)
-    real :: rac(55,1)
-    real :: rgss(55,1)
-    real :: rgso(55,1)
-    real :: rlcs(55,1)
-    real :: rlco(55,1)
+    real :: rj(11,5)
+    real :: rlu(11,5)
+    real :: rac(11,5)
+    real :: rgss(11,5)
+    real :: rgso(11,5)
+    real :: rlcs(11,5)
+    real :: rlco(11,5)
     
     data rj  /9999.,  60., 120.,  70., 130., 100.,9999.,9999., 80., 100., 150.,   &
               9999.,9999.,9999.,9999., 250., 500.,9999.,9999.,9999.,9999.,9999.,  &
@@ -80,10 +80,10 @@ module vd_constants
     ! Define reference lai used in zhang model (gas&aerosol)          
     data lai_ref /0.0, 0.0, 0.0, 5.0, 6.0, 0.1, 0.1, 6.0, 4.0, 3.0,  &
                   0.5, 3.0, 1.0, 0.5, 0.1, 0.1, 0.1, 0.1, 0.1, 1.0,  &
-                  0.1, 1.0, 4.0, 0.0, 3.0, 3.0,                      &!Jan
+                  0.1, 1.0, 4.0, 0.0, 3.0, 3.0,                      & !Jan
                   0.0, 0.0, 0.0, 5.0, 6.0, 0.1, 0.1, 6.0, 4.0, 3.0,  &
                   0.5, 3.0, 1.0, 0.5, 0.1, 0.1, 0.1, 0.1, 0.1, 1.0,  &
-                  0.1, 1.0, 4.0, 0.0, 3.0, 3.0,                      &!Feb
+                  0.1, 1.0, 4.0, 0.0, 3.0, 3.0,                      & !Feb
                   0.0, 0.0, 0.0, 5.0, 6.0, 0.5, 0.5, 6.0, 4.0, 3.0,  &
                   1.0, 3.0, 1.0, 0.5, 0.1, 0.1, 0.1, 0.1, 0.1, 1.0,  &
                   0.1, 0.5, 4.0, 0.0, 3.0, 3.0,                      & !Mar
@@ -122,13 +122,13 @@ module vd_constants
                   0.1, 0.1, 4.0, 0.0, 3.0, 3.0,                      & !MIN
                   0.0, 0.0, 0.0, 5.0, 6.0, 5.0, 5.0, 6.0, 4.0, 3.0,  &
                   3.0, 3.0, 1.0, 2.0, 4.0, 6.0, 5.0, 4.0, 5.0, 1.0,  &
-                  1.0, 2.0, 4.0, 0.0, 5.0, 5.0/                      & !MAX
+                  1.0, 2.0, 4.0, 0.0, 5.0, 5.0/                        !MAX
                   
     ! Define array of constants used in Zhang aerosol model
-    real :: aest(26,1)                          !??
-    real :: pllp1(26,1)                         !mim leaf dimension for each LUC
-    real :: pllp2(26,1)                         !max leaf dimension for each LUC
-    real :: gama(26,1)                          !??
+    real :: aest(26)                          !??
+    real :: pllp1(26)                         !mim leaf dimension for each LUC
+    real :: pllp2(26)                         !max leaf dimension for each LUC
+    real :: gama(26)                          !??
 
     data aest   /100., 50.,100., 1.0, 0.8, 1.1, 0.8, 0.6, 1.0, 1.1,  &
                   1.1, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.1, 1.2, 1.2,  &
