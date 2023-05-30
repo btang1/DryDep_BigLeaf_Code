@@ -1,4 +1,4 @@
-module vd_aero_wesely
+module vd_aerosol_wesely
    
 use vd_constants, only :: xmfp, g, vabs, boltz, vair, vk, rmin, pi
 
@@ -6,7 +6,7 @@ implicit none
 
 contains
 
-   subroutine aero_wesely(z0,deltaz,psih,ustar,diam,rhop,ts,vd)
+   subroutine aerosol_wesely(z0,deltaz,psih,ustar,diam,rhop,ts,vd)
 
       !developed by Dr.Beiming Tang based on CAMx code
       !NOAA ARL UFS project
@@ -89,7 +89,7 @@ contains
 
    end subroutine aerosol_wesely
 
-end module  vd_aero_wesely
+end module  vd_aerosol_wesely
 
 
 
