@@ -1,5 +1,5 @@
 module vd_gas_wesely
-    use vd_constants, only :: vk, rmin, rmax, vair, diffh2o
+    use vd_constants, only : vk, rmin, rmax, vair, diffh2o
     implicit none
         
     contains
