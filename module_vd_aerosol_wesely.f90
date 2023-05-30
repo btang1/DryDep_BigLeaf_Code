@@ -1,6 +1,6 @@
 module vd_aerosol_wesely
    
-use vd_constants, only :: xmfp, g, vabs, boltz, vair, vk, rmin, pi
+use vd_constants, only : xmfp, g, vabs, boltz, vair, vk, rmin, pi
 
 implicit none
 
