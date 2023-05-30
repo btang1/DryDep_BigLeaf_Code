@@ -23,3 +23,11 @@ How to run f2py
         4-3-2. import AAA
         4-3-3. AAA.BBB(input_1, input_2, ... , input_n).  !notice we do not need to put an "output" in the (),but in subroutine we have output in ()
         4-3-4. the result will be shown                   !note that model_file_name.module_name(), not subroutine name
+
+!!!
+How to run f2py with module_constants involved
+!!!
+suppose we have AAA.f90 which need BBB_constant.f90 to run
+1.type "gfortran -o BBB_constant.exe BBB_constant.f90", this will generate BBB_constant.mod file
+2.type "f2py -c AAA.f90 -m AAA", this will readin BBB_constant.mod, and generate AAA.so file
+3.same as above "how to run f2py"
