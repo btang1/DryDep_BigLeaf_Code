@@ -177,7 +177,7 @@ module vd_aerosol_emerson
 
             !!Step 3-2. Calculate efficiency by diffusion(Eb), impaction(Eim), interception(Win) and particle rebound(R1)
 
-            eb       = 0.2*schm **(-2/3)                                             !Follow emerson et al.(2020) eqn (3),cb = 0.2,gama = -2/3
+            eb       = 0.2*schm **(-2./3.)                                             !Follow emerson et al.(2020) eqn (3),cb = 0.2,gama = -2/3
             
             eim      = 0.4*(st/(st+aest(i)))**1.7                                    !Follow emerson et al.,(2020) eqn (4),cm = 0.4, beta = 1.7
             
