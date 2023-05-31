@@ -189,6 +189,7 @@ module vd_aerosol_emerson
             r1       = exp(-st**0.5)                                                 !Follow Zhang et al.,(2001) eqn (9)
             if (r1 < 0.5) then
                 r1   = 0.5
+            end if
 
             !!Step 3-3. Calculate surface resistance, Rs
             rs       = 1./(3.*ustar*r1*(eb + eim + ein))                             !Follow Zhang et al.,(2001) eqn (5). where epsilon = 3
