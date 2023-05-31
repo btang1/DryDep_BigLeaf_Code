@@ -129,7 +129,7 @@ module vd_aerosol_emerson
         !Step 2. Calculate settling velocity, Vg 
 
             !!Step 2-1. Calculate leaf dimension 
-            if (lai_ref(i,15) == lat_ref(i,14)) then    
+            if (lai_ref(i,15) == lai_ref(i,14)) then    
                 pllp = pllp2(i)
             else
                 pllp = pllp2(i) - (lai_f-lai_ref(i,14))/(lai_ref(i,15)-lai_ref(i,14)+1.e-10)*(pllp2(i)-pllp1(i))
@@ -151,7 +151,7 @@ module vd_aerosol_emerson
             priiv    = prii * (rhop -roarow)
             vphil    = 0.
             cfac     = 1. + xmfp/binsize*(aa1+aa2*exp(-aa3*binsize/xmfp))            !Follow Zhang et al., (2001) eqn (3)
-            taurel   = amax1(priiv*binsize**2*cfac/9.81,0)                  
+            taurel   = amax1(priiv*binsize**2*cfac/9.81,0.0)                  
 
             !!Step 2-6. calculate stokes friction and diffusion coefficients         !Same as Wesely method for aerosol
             amob     = 6. * 3.14 * amu *binsize /cfac
@@ -172,7 +172,7 @@ module vd_aerosol_emerson
             
             !!!Step 3-1-2. vegetated surface
             else
-                st   = vg*ustar/(9.81* pllp/1000)                                    !Slinn(1982), used in Zhang et al.,(2001). where A = pllp/1000         
+                st   = vg*ustar/(9.81* pllp/1000.)                                    !Slinn(1982), used in Zhang et al.,(2001). where A = pllp/1000         
             endif
 
             !!Step 3-2. Calculate efficiency by diffusion(Eb), impaction(Eim), interception(Win) and particle rebound(R1)
