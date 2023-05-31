@@ -172,7 +172,7 @@ module vd_aerosol_zhang
             
             !!!Step 3-1-2. vegetated surface
             else
-                st   = vg*ustar/(9.81* pllp/1000)                                    !Slinn(1982), used in Zhang et al.,(2001). where A = pllp/1000         
+                st   = vg*ustar/(9.81* pllp/1000.)                                    !Slinn(1982), used in Zhang et al.,(2001). where A = pllp/1000         
             endif
 
             !!Step 3-2. Calculate efficiency by diffusion(Eb), impaction(Eim), interception(Win) and particle rebound(R1)
