@@ -6,7 +6,7 @@ module vd_aerosol_emerson
     
     contains
 
-    subroutine aerosol_emerson(z2,zl,z0_f,utar,t2,ts,lai_f,mlu,diam,rhoprt,vd)
+    subroutine aerosol_emerson(z2,zl,z0_f,ustar,t2,ts,lai_f,mlu,diam,rhoprt,vd)
 
         !Developed by Dr. Beiming Tang based on CAMx code
         !NOAA ARL UFS project
